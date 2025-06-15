@@ -65,10 +65,33 @@ MAIL_FROM_ADDRESS=noreply@yourdomain.com
 ## Troubleshooting
 
 **Common Issues:**
-1. **Build fails:** Check the build logs, usually missing dependencies
-2. **App won't start:** Check environment variables, especially APP_KEY
-3. **Database connection fails:** Verify MySQL service is running and variables are set
-4. **Assets not loading:** Check that `npm run build` completed successfully
+
+1. **Nixpacks Build Fails with "undefined variable 'npm'":**
+   - **Solution**: Use Dockerfile instead of nixpacks
+   - The project now includes a Dockerfile that's more reliable
+   - Railway will automatically detect and use the Dockerfile
+
+2. **UTF-8 Encoding Errors:**
+   - **Solution**: Files have been converted to proper UTF-8 encoding
+   - If you encounter this again, check file encoding with: `file filename.js`
+
+3. **Build fails:** Check the build logs, usually missing dependencies
+
+4. **App won't start:** Check environment variables, especially APP_KEY
+
+5. **Database connection fails:** Verify MySQL service is running and variables are set
+
+6. **Assets not loading:** Check that `npm run build` completed successfully
+
+**Build Method Options:**
+
+This project supports two build methods:
+
+1. **Dockerfile (Recommended)**: More reliable, consistent builds
+   - Set in `railway.json`: `"builder": "dockerfile"`
+   
+2. **Nixpacks**: Faster builds but can have dependency issues
+   - Set in `railway.json`: `"builder": "nixpacks"`
 
 **Useful Railway CLI Commands:**
 ```bash

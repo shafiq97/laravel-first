@@ -1,14 +1,9 @@
 {
   "build": {
-    "builder": "nixpacks"
+    "builder": "dockerfile"
   },
   "deploy": {
     "numReplicas": 1,
     "restartPolicyType": "never"
-  },
-  "variables": {
-    "LC_ALL": "C.UTF-8",
-    "LANG": "C.UTF-8",
-    "LANGUAGE": "C.UTF-8"
   }
 }
