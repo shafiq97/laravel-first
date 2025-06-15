@@ -4,6 +4,11 @@
 
 echo "Starting Railway deployment..."
 
+# Set UTF-8 locale
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LANGUAGE=C.UTF-8
+
 # Set environment to production
 export APP_ENV=production
 
