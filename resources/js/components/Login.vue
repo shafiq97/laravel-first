@@ -144,7 +144,7 @@
   }
 
   body {
-    background: url("@/assets/images/background.jpg") no-repeat center center fixed;
+    background: url("/images/background.jpg") no-repeat center center fixed;
     background-size: cover;
   }
   </style>

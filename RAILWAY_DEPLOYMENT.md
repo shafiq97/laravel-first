@@ -86,7 +86,12 @@ MAIL_FROM_ADDRESS=noreply@yourdomain.com
    - **Solution**: Files have been converted to proper UTF-8 encoding
    - If you encounter this again, check file encoding with: `file filename.js`
 
-4. **Build fails:** Check the build logs, usually missing dependencies
+4. **Vite Build Fails with Missing Image Assets:**
+   - **Solution**: Fixed image path references in Vue components
+   - All components now use `/images/` path (refers to `public/images/`)
+   - Ensures consistency and avoids Vite build issues
+
+5. **Build fails:** Check the build logs, usually missing dependencies
 
 5. **App won't start:** Check environment variables, especially APP_KEY
 
