@@ -92,9 +92,10 @@ MAIL_FROM_ADDRESS=noreply@yourdomain.com
    - Ensures consistency and avoids Vite build issues
 
 5. **Laravel Serve Command Error "Unsupported operand types":**
-   - **Solution**: Fixed PORT environment variable handling
-   - Updated docker-entrypoint.sh to properly validate and cast PORT as integer
-   - Laravel's serve command now receives a properly formatted port number
+   - **Solution**: Switched to PHP's built-in server instead of `artisan serve`
+   - This bypasses the Laravel 12 serve command bug entirely
+   - Uses `php -S` which is more reliable for containerized environments
+   - Application will run from the `public` directory as expected
 
 6. **Build fails:** Check the build logs, usually missing dependencies
 
