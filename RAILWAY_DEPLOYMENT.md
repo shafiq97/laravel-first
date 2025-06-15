@@ -71,17 +71,22 @@ MAIL_FROM_ADDRESS=noreply@yourdomain.com
    - The project now includes a Dockerfile that's more reliable
    - Railway will automatically detect and use the Dockerfile
 
-2. **UTF-8 Encoding Errors:**
+2. **Composer Install Fails in Dockerfile:**
+   - **Solution**: The Dockerfile now includes `--ignore-platform-reqs` flag
+   - This handles PHP version mismatches between local and Railway environments
+   - Also added fallback composer install command
+
+3. **UTF-8 Encoding Errors:**
    - **Solution**: Files have been converted to proper UTF-8 encoding
    - If you encounter this again, check file encoding with: `file filename.js`
 
-3. **Build fails:** Check the build logs, usually missing dependencies
+4. **Build fails:** Check the build logs, usually missing dependencies
 
-4. **App won't start:** Check environment variables, especially APP_KEY
+5. **App won't start:** Check environment variables, especially APP_KEY
 
-5. **Database connection fails:** Verify MySQL service is running and variables are set
+6. **Database connection fails:** Verify MySQL service is running and variables are set
 
-6. **Assets not loading:** Check that `npm run build` completed successfully
+7. **Assets not loading:** Check that `npm run build` completed successfully
 
 **Build Method Options:**
 

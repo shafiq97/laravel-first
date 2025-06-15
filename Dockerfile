@@ -1,60 +1,45 @@
-# Use the official PHP image
+# Use PHP with CLI
 FROM php:8.2-cli
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-
-# Install system dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip \
     nodejs \
     npm \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set working directory
 WORKDIR /app
 
-# Copy composer files
-COPY composer.json composer.lock ./
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# Copy package files
-COPY package*.json ./
-
-# Install Node dependencies
-RUN npm ci --silent
-
-# Copy application code
+# Copy application files
 COPY . .
 
-# Build frontend assets
-RUN npm run build
+# Install PHP dependencies with more permissive settings
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs || \
+    composer install --no-dev --no-interaction --ignore-platform-reqs
 
-# Generate optimized files
-RUN php artisan config:cache || true
-RUN php artisan route:cache || true  
-RUN php artisan view:cache || true
+# Install Node dependencies and build
+RUN npm install --silent && npm run build
 
 # Set permissions
-RUN chmod -R 775 storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+RUN mkdir -p storage/logs storage/framework/{cache,sessions,views} bootstrap/cache
 
-# Expose port (Railway will set PORT env var)
+# Default port
+ENV PORT=8080
 EXPOSE $PORT
 
-# Start the application
+# Simple startup command
 CMD php artisan serve --host=0.0.0.0 --port=$PORT
