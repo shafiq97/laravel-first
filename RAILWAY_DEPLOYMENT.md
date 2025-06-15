@@ -91,7 +91,12 @@ MAIL_FROM_ADDRESS=noreply@yourdomain.com
    - All components now use `/images/` path (refers to `public/images/`)
    - Ensures consistency and avoids Vite build issues
 
-5. **Build fails:** Check the build logs, usually missing dependencies
+5. **Laravel Serve Command Error "Unsupported operand types":**
+   - **Solution**: Fixed PORT environment variable handling
+   - Updated docker-entrypoint.sh to properly validate and cast PORT as integer
+   - Laravel's serve command now receives a properly formatted port number
+
+6. **Build fails:** Check the build logs, usually missing dependencies
 
 5. **App won't start:** Check environment variables, especially APP_KEY
 

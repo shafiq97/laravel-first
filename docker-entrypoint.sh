@@ -1,46 +1,46 @@
 #!/bin/bash
 set -e
 
-# Set default port if not provided
-export PORT=${PORT:-8080}
+echo "Starting Laravel application..."
 
-echo "Starting Laravel application setup..."
+# Handle PORT environment variable properly
+if [ -z "$PORT" ]; then
+    PORT=8080
+fi
 
-# Ensure .env file exists with basic content if not provided by Railway
+# Ensure PORT is a valid integer
+if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
+    echo "Invalid PORT value: $PORT, using 8080"
+    PORT=8080
+fi
+
+echo "Using port: $PORT"
+
+# Create .env if it doesn't exist
 if [ ! -f .env ]; then
-    echo "Creating .env file from example..."
-    cp .env.example .env
+    if [ -f .env.example ]; then
+        cp .env.example .env
+    elif [ -f .env.build ]; then
+        cp .env.build .env
+    else
+        echo "APP_KEY=" > .env
+    fi
 fi
 
-# Generate app key if not set
-if [ -z "$APP_KEY" ]; then
+# Generate app key if needed
+if [ -z "$APP_KEY" ] || ! grep -q "APP_KEY=base64:" .env 2>/dev/null; then
     echo "Generating application key..."
-    php artisan key:generate --force --no-interaction
-    export APP_KEY=$(grep APP_KEY .env | cut -d '=' -f2)
+    php artisan key:generate --force --no-interaction || echo "Key generation failed, continuing..."
 fi
 
-# Wait a moment for database to be ready (if applicable)
-echo "Waiting for database connection..."
-sleep 3
+# Try migrations (fail silently if no database)
+echo "Running migrations..."
+php artisan migrate --force --no-interaction 2>/dev/null || echo "Migrations skipped"
 
-# Try to run migrations (ignore if database not available)
-echo "Attempting to run migrations..."
-php artisan migrate --force --no-interaction 2>/dev/null || echo "Migrations skipped (database not available)"
+# Clear caches
+php artisan config:clear 2>/dev/null || true
 
-# Clear and optimize caches for production
-echo "Optimizing application..."
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+echo "Starting server on 0.0.0.0:$PORT"
 
-# Only cache if we have a proper environment
-if [ "$APP_ENV" = "production" ]; then
-    php artisan config:cache 2>/dev/null || echo "Config cache skipped"
-    php artisan route:cache 2>/dev/null || echo "Route cache skipped"
-    php artisan view:cache 2>/dev/null || echo "View cache skipped"
-fi
-
-echo "Starting Laravel development server on 0.0.0.0:$PORT"
-
-# Start the Laravel server
-exec php artisan serve --host=0.0.0.0 --port=$PORT
+# Start Laravel with explicit port parameter
+exec php artisan serve --host=0.0.0.0 --port="$PORT"
