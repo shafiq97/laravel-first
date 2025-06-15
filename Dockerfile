@@ -26,6 +26,9 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
+# Create .env file for build process (will be overridden at runtime)
+RUN cp .env.build .env
+
 # Install PHP dependencies with more permissive settings
 RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs || \
     composer install --no-dev --no-interaction --ignore-platform-reqs
@@ -41,5 +44,9 @@ RUN mkdir -p storage/logs storage/framework/{cache,sessions,views} bootstrap/cac
 ENV PORT=8080
 EXPOSE $PORT
 
-# Simple startup command
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+# Copy startup script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Use startup script
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

@@ -71,7 +71,13 @@ MAIL_FROM_ADDRESS=noreply@yourdomain.com
    - The project now includes a Dockerfile that's more reliable
    - Railway will automatically detect and use the Dockerfile
 
-2. **Composer Install Fails in Dockerfile:**
+2. **Composer Install Fails with Key Generation Error:**
+   - **Solution**: Added `.env.build` file for build process
+   - The Dockerfile now creates a temporary .env file during build
+   - Runtime environment variables will override this at startup
+   - Updated composer scripts to be more build-friendly
+
+3. **Composer Install Fails in Dockerfile:**
    - **Solution**: The Dockerfile now includes `--ignore-platform-reqs` flag
    - This handles PHP version mismatches between local and Railway environments
    - Also added fallback composer install command
