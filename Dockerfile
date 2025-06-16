@@ -48,19 +48,6 @@ COPY . .
 RUN php artisan package:discover --ansi || true
 
 # Install Node dependencies and build
-COPY . .
-
-# Create .env file for build process (will be overridden at runtime)
-RUN cp .env.build .env
-
-# Clear composer cache and install PHP dependencies with more permissive settings and verbosity
-RUN composer clear-cache
-RUN composer update --no-dev --no-interaction --ignore-platform-reqs -vvv || \\\
-    composer update --no-dev --no-interaction --ignore-platform-reqs
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs -vvv || \\\
-    composer install --no-dev --no-interaction --ignore-platform-reqs -vvv
-
-# Install Node dependencies and build
 RUN npm install --silent && npm run build
 
 # Set permissions
