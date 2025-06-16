@@ -1,8 +1,15 @@
 #!/usr/bin/env php
 <?php
 
-use Illuminate\Foundation\Application;
-use Symfony\Component\Console\Input\ArgvInput;
+// Check if this is the 'serve' command in a Railway environment
+if (isset($_SERVER['RAILWAY_ENVIRONMENT']) && isset($argv[1]) && $argv[1] === 'serve') {
+    error_log("ARTISAN_SERVE_DETECTED_ON_RAILWAY");
+    error_log("Arguments: " . implode(' ', $argv));
+    error_log("SERVER_PORT env: " . ($_ENV['SERVER_PORT'] ?? 'not set'));
+    error_log("PORT env: " . ($_ENV['PORT'] ?? 'not set'));
+    // To forcefully stop 'php artisan serve' if it's unexpectedly called, uncomment next line
+    // exit(255); // Exit with a specific code to indicate this diagnostic stop
+}
 
 define('LARAVEL_START', microtime(true));
 
