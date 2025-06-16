@@ -8,13 +8,16 @@ if (isset($_SERVER['RAILWAY_ENVIRONMENT']) && isset($argv[1]) && $argv[1] === 's
     error_log("SERVER_PORT env: " . ($_ENV['SERVER_PORT'] ?? 'not set'));
     error_log("PORT env: " . ($_ENV['PORT'] ?? 'not set'));
     // To forcefully stop 'php artisan serve' if it's unexpectedly called, uncomment next line
-    // exit(255); // Exit with a specific code to indicate this diagnostic stop
+    exit(255); // Exit with a specific code to indicate this diagnostic stop - BLOCKING ARTISAN SERVE
 }
 
 define('LARAVEL_START', microtime(true));
 
 // Register the Composer autoloader...
 require __DIR__.'/vendor/autoload.php';
+
+// Import the required class
+use Symfony\Component\Console\Input\ArgvInput;
 
 // Bootstrap Laravel and handle the command...
 /** @var Application $app */
