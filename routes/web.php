@@ -90,3 +90,40 @@ Route::get('/login', function () {
 Route::get('/{any}', function () {
     return view('welcome'); // This serves your Vue SPA
 })->where('any', '^(?!api).*$'); // This pattern excludes routes starting with "api"
+
+// Manual migration route (for debugging)
+Route::get('/migrate', function () {
+    try {
+        $output = [];
+        
+        // Check database connection
+        try {
+            \DB::connection()->getPdo();
+            $output[] = "✓ Database connection successful";
+        } catch (\Exception $e) {
+            $output[] = "✗ Database connection failed: " . $e->getMessage();
+            return response()->json(['status' => 'error', 'output' => $output], 500);
+        }
+        
+        // Run migrations
+        $output[] = "Running migrations...";
+        \Artisan::call('migrate', ['--force' => true]);
+        $output[] = "Migration output: " . \Artisan::output();
+        
+        // Check migration status
+        \Artisan::call('migrate:status');
+        $output[] = "Migration status: " . \Artisan::output();
+        
+        return response()->json([
+            'status' => 'success',
+            'output' => $output
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+});
