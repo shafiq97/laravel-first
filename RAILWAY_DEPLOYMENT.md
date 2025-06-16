@@ -92,10 +92,11 @@ MAIL_FROM_ADDRESS=noreply@yourdomain.com
    - Ensures consistency and avoids Vite build issues
 
 5. **Laravel Serve Command Error "Unsupported operand types":**
-   - **Solution**: Switched to PHP's built-in server instead of `artisan serve`
-   - This bypasses the Laravel 12 serve command bug entirely
-   - Uses `php -S` which is more reliable for containerized environments
-   - Application will run from the `public` directory as expected
+   - **Solution**: Removed Procfile that was calling `artisan serve`
+   - Railway was using Procfile instead of Dockerfile CMD
+   - Now uses PHP's built-in server exclusively: `php -S 0.0.0.0:$PORT`
+   - Added timeout protection for artisan commands during startup
+   - Application setup only runs if database is available
 
 6. **Build fails:** Check the build logs, usually missing dependencies
 
